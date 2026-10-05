@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Modern Calculator UI</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Poppins', sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+        }
+
+        .glass-card {
+            background: rgba(255, 255, 255, 0.15);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.2);
+        }
+
+        .calc-btn {
+            transition: all 0.2s ease;
+        }
+
+        .calc-btn:active {
+            transform: scale(0.95);
+        }
+    </style>
+</head>
+<body class="flex items-center justify-center p-4">
+
+    <div class="glass-card w-full max-w-md rounded-3xl p-8 text-white">
+        
+        <div class="text-center mb-6">
+            <h1 class="text-2xl font-bold tracking-wider">MODERN CALCULATOR</h1>
+            <p class="text-xs text-white/70 mt-1">Perform quick mathematical operations</p>
+        </div>
+
+        <!-- Calculator Form / Inputs -->
+        <form id="calcForm" class="space-y-5" onsubmit="return false;">
+            <div>
+                <label for="num1" class="block text-xs uppercase tracking-wider font-medium text-white/80 mb-2">First Number</label>
+                <input type="number" step="any" id="num1" placeholder="Enter number..." 
+                    class="w-full bg-white/10 border border-white/20 rounded-xl px-4 py-3 text-white placeholder-white/40 focus:outline-none focus:border-white transition-all font-medium text-lg">
+            </div>
+
+            <div>
+                <label for="num2" class="block text-xs uppercase tracking-wider font-medium text-white/80 mb-2">Second Number</label>
+                <input type="number" step="any" id="num2" placeholder="Enter number..." 
+                    class="w-full bg-white/10 border border-white/20 rounded-xl px-4 py-3 text-white placeholder-white/40 focus:outline-none focus:border-white transition-all font-medium text-lg">
+            </div>
+
+            <!-- Operation Buttons Grid -->
+            <div class="grid grid-cols-4 gap-3 pt-2">
+                <button type="button" onclick="calculate('add')" class="calc-btn bg-indigo-600/80 hover:bg-indigo-600 border border-indigo-400/40 font-bold py-3 rounded-xl text-xl shadow-lg shadow-indigo-600/30">+</button>
+                <button type="button" onclick="calculate('subtract')" class="calc-btn bg-purple-600/80 hover:bg-purple-600 border border-purple-400/40 font-bold py-3 rounded-xl text-xl shadow-lg shadow-purple-600/30">-</button>
+                <button type="button" onclick="calculate('multiply')" class="calc-btn bg-pink-600/80 hover:bg-pink-600 border border-pink-400/40 font-bold py-3 rounded-xl text-xl shadow-lg shadow-pink-600/30">×</button>
+                <button type="button" onclick="calculate('divide')" class="calc-btn bg-blue-600/80 hover:bg-blue-600 border border-blue-400/40 font-bold py-3 rounded-xl text-xl shadow-lg shadow-blue-600/30">÷</button>
+            </div>
+
+            <!-- Clear button -->
+            <button type="button" onclick="clearCalculator()" class="w-full bg-white/10 hover:bg-white/20 border border-white/20 text-xs uppercase tracking-widest font-semibold py-3 rounded-xl transition-all">
+                Reset Form
+            </button>
+        </form>
+
+        <!-- Result Box -->
+        <div class="mt-6 pt-6 border-t border-white/20">
+            <div class="text-xs uppercase tracking-wider text-white/70 mb-1">Calculation Result</div>
+            <div id="resultBox" class="w-full bg-black/20 border border-white/10 rounded-xl p-4 text-2xl font-bold tracking-wide text-emerald-400 min-h-[64px] flex items-center justify-center">
+                0
+            </div>
+        </div>
+
+    </div>
+
+    <script>
+        function calculate(operation) {
+            const num1Str = document.getElementById('num1').value;
+            const num2Str = document.getElementById('num2').value;
+            const resultBox = document.getElementById('resultBox');
+
+            // Validate inputs
+            if (num1Str === '' || num2Str === '') {
+                resultBox.textContent = 'Please enter both numbers!';
+                resultBox.className = 'w-full bg-black/20 border border-red-500/40 rounded-xl p-4 text-lg font-semibold tracking-wide text-red-400 min-h-[64px] flex items-center justify-center';
+                return;
+            }
+
+            const a = parseFloat(num1Str);
+            const b = parseFloat(num2Str);
+            let result;
+
+            switch (operation) {
+                case 'add':
+                    result = a + b;
+                    break;
+                case 'subtract':
+                    result = a - b;
+                    break;
+                case 'multiply':
+                    result = a * b;
+                    break;
+                case 'divide':
+                    if (b === 0) {
+                        resultBox.textContent = 'Error: Division by zero!';
+                        resultBox.className = 'w-full bg-black/20 border border-red-500/40 rounded-xl p-4 text-lg font-semibold tracking-wide text-red-400 min-h-[64px] flex items-center justify-center';
+                        return;
+                    }
+                    result = a / b;
+                    break;
+                default:
+                    return;
+            }
+
+            // Format output nicely (handle precision decimals if needed)
+            let formattedResult = Number.isInteger(result) ? result : result.toFixed(4);
+
+            resultBox.textContent = formattedResult;
+            resultBox.className = 'w-full bg-black/20 border border-white/10 rounded-xl p-4 text-2xl font-bold tracking-wide text-emerald-400 min-h-[64px] flex items-center justify-center';
+        }
+
+        function clearCalculator() {
+            document.getElementById('num1').value = '';
+            document.getElementById('num2').value = '';
+            const resultBox = document.getElementById('resultBox');
+            resultBox.textContent = '0';
+            resultBox.className = 'w-full bg-black/20 border border-white/10 rounded-xl p-4 text-2xl font-bold tracking-wide text-emerald-400 min-h-[64px] flex items-center justify-center';
+        }
+    </script>
+</body>
+</html>
